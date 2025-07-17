@@ -69,9 +69,24 @@ KeyboardInputManager.prototype.listen = function () {
   });
 
   // Respond to button presses
-  this.bindButtonPress(".retry-button", this.restart);
+  this.bindButtonPress(".retry-button", this.retry);
   this.bindButtonPress(".restart-button", this.restart);
   this.bindButtonPress(".keep-playing-button", this.keepPlaying);
+  this.bindButtonPress(".shuffle-button", this.restart);
+  this.bindButtonPress(".new-game-button", this.restart);
+  this.bindButtonPress(".stats-button", this.stats);
+  this.bindButtonPress(".settings-button", this.settings);
+  this.bindButtonPress(".leaderboard-button", this.leaderboard);
+  this.bindButtonPress(".play-again-button", this.retry);
+  this.bindButtonPress(".menu-button", this.showTutorial);
+  this.bindButtonPress("#tutorialCloseBtn", this.hideTutorial);
+  this.bindButtonPress("#tutorialStartBtn", this.hideTutorial);
+  this.bindButtonPress("#statsCloseBtn", this.hideStats);
+  this.bindButtonPress("#statsOkBtn", this.hideStats);
+  this.bindButtonPress("#settingsCloseBtn", this.hideSettings);
+  this.bindButtonPress("#settingsOkBtn", this.hideSettings);
+  this.bindButtonPress("#leaderboardCloseBtn", this.hideLeaderboard);
+  this.bindButtonPress("#leaderboardOkBtn", this.hideLeaderboard);
 
   // Respond to swipe events
   var touchStartClientX, touchStartClientY;
@@ -129,7 +144,48 @@ KeyboardInputManager.prototype.listen = function () {
 
 KeyboardInputManager.prototype.restart = function (event) {
   event.preventDefault();
+  this.showNewGameConfirmation();
+};
+
+KeyboardInputManager.prototype.retry = function (event) {
+  event.preventDefault();
   this.emit("restart");
+};
+
+KeyboardInputManager.prototype.showNewGameConfirmation = function () {
+  var dialog = document.getElementById('newGameDialog');
+  var startBtn = document.getElementById('startNewGameBtn');
+  var cancelBtn = document.getElementById('cancelNewGameBtn');
+  
+  // Show the dialog
+  dialog.classList.add('show');
+  
+  // Handle start new game button
+  var startHandler = function() {
+    dialog.classList.remove('show');
+    startBtn.removeEventListener('click', startHandler);
+    cancelBtn.removeEventListener('click', cancelHandler);
+    this.emit("restart");
+  }.bind(this);
+  
+  // Handle cancel button
+  var cancelHandler = function() {
+    dialog.classList.remove('show');
+    startBtn.removeEventListener('click', startHandler);
+    cancelBtn.removeEventListener('click', cancelHandler);
+  };
+  
+  startBtn.addEventListener('click', startHandler);
+  cancelBtn.addEventListener('click', cancelHandler);
+  
+  // Close dialog when clicking outside
+  dialog.addEventListener('click', function(e) {
+    if (e.target === dialog) {
+      dialog.classList.remove('show');
+      startBtn.removeEventListener('click', startHandler);
+      cancelBtn.removeEventListener('click', cancelHandler);
+    }
+  });
 };
 
 KeyboardInputManager.prototype.keepPlaying = function (event) {
@@ -137,8 +193,67 @@ KeyboardInputManager.prototype.keepPlaying = function (event) {
   this.emit("keepPlaying");
 };
 
+KeyboardInputManager.prototype.undo = function (event) {
+  event.preventDefault();
+  this.emit("undo");
+};
+
+KeyboardInputManager.prototype.settings = function (event) {
+  event.preventDefault();
+  this.emit("settings");
+};
+
+KeyboardInputManager.prototype.leaderboard = function (event) {
+  event.preventDefault();
+  this.emit("leaderboard");
+};
+
+KeyboardInputManager.prototype.stats = function (event) {
+  event.preventDefault();
+  this.emit("stats");
+};
+
+KeyboardInputManager.prototype.showTutorial = function (event) {
+  event.preventDefault();
+  var tutorialModal = document.getElementById('tutorialModal');
+  tutorialModal.classList.add('show');
+  
+  // Close tutorial when clicking outside
+  tutorialModal.addEventListener('click', function(e) {
+    if (e.target === tutorialModal) {
+      tutorialModal.classList.remove('show');
+    }
+  });
+};
+
+KeyboardInputManager.prototype.hideTutorial = function (event) {
+  event.preventDefault();
+  var tutorialModal = document.getElementById('tutorialModal');
+  tutorialModal.classList.remove('show');
+};
+
+KeyboardInputManager.prototype.hideStats = function (event) {
+  event.preventDefault();
+  var statsModal = document.getElementById('statsModal');
+  statsModal.classList.remove('show');
+};
+
+KeyboardInputManager.prototype.hideSettings = function (event) {
+  event.preventDefault();
+  var settingsModal = document.getElementById('settingsModal');
+  settingsModal.classList.remove('show');
+};
+
+KeyboardInputManager.prototype.hideLeaderboard = function (event) {
+  event.preventDefault();
+  var leaderboardModal = document.getElementById('leaderboardModal');
+  leaderboardModal.classList.remove('show');
+};
+
 KeyboardInputManager.prototype.bindButtonPress = function (selector, fn) {
   var button = document.querySelector(selector);
-  button.addEventListener("click", fn.bind(this));
-  button.addEventListener(this.eventTouchend, fn.bind(this));
+  if (button) {
+    button.addEventListener("click", fn.bind(this));
+    button.addEventListener(this.eventTouchend, fn.bind(this));
+  }
 };

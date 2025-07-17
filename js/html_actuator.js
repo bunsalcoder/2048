@@ -1,7 +1,7 @@
 function HTMLActuator() {
   this.tileContainer    = document.querySelector(".tile-container");
-  this.scoreContainer   = document.querySelector(".score-container");
-  this.bestContainer    = document.querySelector(".best-container");
+  this.scoreContainer   = document.querySelector(".score-value");
+  this.bestContainer    = document.querySelector(".best-value");
   this.messageContainer = document.querySelector(".game-message");
 
   this.score = 0;
@@ -23,6 +23,7 @@ HTMLActuator.prototype.actuate = function (grid, metadata) {
 
     self.updateScore(metadata.score);
     self.updateBestScore(metadata.bestScore);
+    self.moveCount = metadata.moveCount || 0;
 
     if (metadata.terminated) {
       if (metadata.over) {
@@ -38,6 +39,12 @@ HTMLActuator.prototype.actuate = function (grid, metadata) {
 // Continues the game (both restart and keep playing)
 HTMLActuator.prototype.continueGame = function () {
   this.clearMessage();
+  
+  // Remove game-over class and animations
+  var gameContainer = document.querySelector('.game-container');
+  if (gameContainer) {
+    gameContainer.classList.remove('game-over');
+  }
 };
 
 HTMLActuator.prototype.clearContainer = function (container) {
@@ -100,24 +107,12 @@ HTMLActuator.prototype.normalizePosition = function (position) {
 
 HTMLActuator.prototype.positionClass = function (position) {
   position = this.normalizePosition(position);
-  return "tile-position-" + position.x + "-" + position.y;
+  return "tile-position-" + position.y + "-" + position.x;
 };
 
 HTMLActuator.prototype.updateScore = function (score) {
-  this.clearContainer(this.scoreContainer);
-
-  var difference = score - this.score;
   this.score = score;
-
   this.scoreContainer.textContent = this.score;
-
-  if (difference > 0) {
-    var addition = document.createElement("div");
-    addition.classList.add("score-addition");
-    addition.textContent = "+" + difference;
-
-    this.scoreContainer.appendChild(addition);
-  }
 };
 
 HTMLActuator.prototype.updateBestScore = function (bestScore) {
@@ -129,7 +124,29 @@ HTMLActuator.prototype.message = function (won) {
   var message = won ? "You win!" : "Game over!";
 
   this.messageContainer.classList.add(type);
-  this.messageContainer.getElementsByTagName("p")[0].textContent = message;
+  
+  if (won) {
+    // For win message, use simple text
+    this.messageContainer.getElementsByTagName("p")[0].textContent = message;
+  } else {
+    // For game over, show the modern game over screen
+    this.showGameOverScreen();
+  }
+};
+
+HTMLActuator.prototype.showGameOverScreen = function () {
+  var statsElement = this.messageContainer.querySelector('.game-over-stats');
+  var gameContainer = document.querySelector('.game-container');
+  
+  statsElement.textContent = this.score + " points scored in " + this.moveCount + " moves.";
+  
+  // Add game-over class to container for tile animations
+  gameContainer.classList.add('game-over');
+  
+  // Add animation class
+  setTimeout(() => {
+    this.messageContainer.classList.add('show');
+  }, 100);
 };
 
 HTMLActuator.prototype.clearMessage = function () {

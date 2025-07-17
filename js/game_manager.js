@@ -5,10 +5,14 @@ function GameManager(size, InputManager, Actuator, StorageManager) {
   this.actuator       = new Actuator;
 
   this.startTiles     = 2;
+  this.moveCount      = 0;
 
   this.inputManager.on("move", this.move.bind(this));
   this.inputManager.on("restart", this.restart.bind(this));
   this.inputManager.on("keepPlaying", this.keepPlaying.bind(this));
+  this.inputManager.on("stats", this.stats.bind(this));
+  this.inputManager.on("settings", this.settings.bind(this));
+  this.inputManager.on("leaderboard", this.leaderboard.bind(this));
 
   this.setup();
 }
@@ -43,12 +47,14 @@ GameManager.prototype.setup = function () {
     this.over        = previousState.over;
     this.won         = previousState.won;
     this.keepPlaying = previousState.keepPlaying;
+    this.moveCount   = previousState.moveCount || 0;
   } else {
     this.grid        = new Grid(this.size);
     this.score       = 0;
     this.over        = false;
     this.won         = false;
     this.keepPlaying = false;
+    this.moveCount   = 0;
 
     // Add the initial tiles
     this.addStartTiles();
@@ -93,7 +99,8 @@ GameManager.prototype.actuate = function () {
     over:       this.over,
     won:        this.won,
     bestScore:  this.storageManager.getBestScore(),
-    terminated: this.isGameTerminated()
+    terminated: this.isGameTerminated(),
+    moveCount:  this.moveCount
   });
 
 };
@@ -105,7 +112,8 @@ GameManager.prototype.serialize = function () {
     score:       this.score,
     over:        this.over,
     won:         this.won,
-    keepPlaying: this.keepPlaying
+    keepPlaying: this.keepPlaying,
+    moveCount:   this.moveCount
   };
 };
 
@@ -180,6 +188,7 @@ GameManager.prototype.move = function (direction) {
   });
 
   if (moved) {
+    this.moveCount++;
     this.addRandomTile();
 
     if (!this.movesAvailable()) {
@@ -269,4 +278,67 @@ GameManager.prototype.tileMatchesAvailable = function () {
 
 GameManager.prototype.positionsEqual = function (first, second) {
   return first.x === second.x && first.y === second.y;
+};
+
+// Handle undo button
+GameManager.prototype.undo = function () {
+  // For now, just restart the game
+  // In a full implementation, this would restore the previous game state
+  this.restart();
+};
+
+// Handle stats button
+GameManager.prototype.stats = function () {
+  console.log("Stats clicked");
+  var statsModal = document.getElementById('statsModal');
+  var currentScoreEl = document.getElementById('currentScore');
+  var bestScoreEl = document.getElementById('bestScore');
+  var totalMovesEl = document.getElementById('totalMoves');
+  
+  // Update stats values
+  currentScoreEl.textContent = this.score;
+  bestScoreEl.textContent = this.storageManager.getBestScore();
+  totalMovesEl.textContent = this.moveCount;
+  
+  // Show modal
+  statsModal.classList.add('show');
+  
+  // Close when clicking outside
+  statsModal.addEventListener('click', function(e) {
+    if (e.target === statsModal) {
+      statsModal.classList.remove('show');
+    }
+  });
+};
+
+// Handle settings button
+GameManager.prototype.settings = function () {
+  console.log("Settings clicked");
+  var settingsModal = document.getElementById('settingsModal');
+  
+  // Show modal
+  settingsModal.classList.add('show');
+  
+  // Close when clicking outside
+  settingsModal.addEventListener('click', function(e) {
+    if (e.target === settingsModal) {
+      settingsModal.classList.remove('show');
+    }
+  });
+};
+
+// Handle leaderboard button
+GameManager.prototype.leaderboard = function () {
+  console.log("Leaderboard clicked");
+  var leaderboardModal = document.getElementById('leaderboardModal');
+  
+  // Show modal
+  leaderboardModal.classList.add('show');
+  
+  // Close when clicking outside
+  leaderboardModal.addEventListener('click', function(e) {
+    if (e.target === leaderboardModal) {
+      leaderboardModal.classList.remove('show');
+    }
+  });
 };

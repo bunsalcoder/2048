@@ -17,26 +17,48 @@
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1, user-scalable=no, minimal-ui">
 </head>
 <body>
-  <div class="container">
-    <div class="heading">
-      <h1 class="title">2048</h1>
-      <div class="scores-container">
-        <div class="score-container">0</div>
-        <div class="best-container">0</div>
+  <div class="game-wrapper">
+    <!-- Header -->
+    <header class="game-header">
+      <button class="menu-button" aria-label="Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      
+      <h1 class="game-title">2048</h1>
+      
+      <button class="restart-button" aria-label="New Game">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+          <path d="M21 3v5h-5"></path>
+          <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+          <path d="M3 21v-5h5"></path>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Score Bar -->
+    <div class="score-bar">
+      <div class="score-container">
+        <span class="score-label">SCORE</span>
+        <span class="score-value">0</span>
+      </div>
+      <div class="best-container">
+        <span class="score-label">BEST</span>
+        <span class="best-value">0</span>
       </div>
     </div>
 
-    <div class="above-game">
-      <p class="game-intro">Join the numbers and get to the <strong>2048 tile!</strong></p>
-      <a class="restart-button">New Game</a>
-    </div>
-
+    <!-- Game Container -->
     <div class="game-container">
       <div class="game-message">
-        <p></p>
-        <div class="lower">
-	        <a class="keep-playing-button">Keep going</a>
-          <a class="retry-button">Try again</a>
+        <h2 class="game-over-title">Game Over!</h2>
+        <p class="game-over-stats"></p>
+        <div class="game-over-buttons">
+          <button class="play-again-button">Play Again</button>
         </div>
       </div>
 
@@ -68,21 +90,222 @@
       </div>
 
       <div class="tile-container">
-
       </div>
     </div>
 
-    <p class="game-explanation">
-      <strong class="important">How to play:</strong> Use your <strong>arrow keys</strong> to move the tiles. When two tiles with the same number touch, they <strong>merge into one!</strong>
-    </p>
-    <hr>
-    <p>
-    <strong class="important">Note:</strong> This site is the official version of 2048. You can play it on your phone via <a href="http://git.io/2048">http://git.io/2048.</a> All other apps or sites are derivatives or fakes, and should be used with caution.
-    </p>
-    <hr>
-    <p>
-    Created by <a href="http://gabrielecirulli.com" target="_blank">Gabriele Cirulli.</a> Based on <a href="https://itunes.apple.com/us/app/1024!/id823499224" target="_blank">1024 by Veewo Studio</a> and conceptually similar to <a href="http://asherv.com/threes/" target="_blank">Threes by Asher Vollmer.</a>
-    </p>
+    <!-- Footer Controls -->
+    <footer class="game-footer">
+      <div class="control-buttons">
+        <button class="control-button new-game-button" aria-label="New Game">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+            <path d="M21 3v5h-5"></path>
+            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+            <path d="M3 21v-5h5"></path>
+          </svg>
+        </button>
+        
+        <button class="control-button stats-button" aria-label="Statistics">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 3v18h18"></path>
+            <path d="M18 17V9"></path>
+            <path d="M13 17V5"></path>
+            <path d="M8 17v-3"></path>
+          </svg>
+        </button>
+        
+        <button class="control-button settings-button" aria-label="Settings">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </button>
+        
+        <button class="control-button leaderboard-button" aria-label="Leaderboard">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+            <path d="M6 2v7"></path>
+            <path d="M6 11H4.5a2.5 2.5 0 0 0 0 5H6"></path>
+            <path d="M6 16v-5"></path>
+            <path d="M10 6h1.5a2.5 2.5 0 0 1 0 5H10"></path>
+            <path d="M10 6v7"></path>
+            <path d="M10 16h1.5a2.5 2.5 0 0 0 0-5H10"></path>
+            <path d="M10 16V9"></path>
+            <path d="M14 6h3.5a2.5 2.5 0 0 1 0 5H14"></path>
+            <path d="M14 6v7"></path>
+            <path d="M14 16h3.5a2.5 2.5 0 0 0 0-5H14"></path>
+            <path d="M14 16V9"></path>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="copyright">
+        <p>🎮 Keep playing, keep merging!</p>
+        <p>🎯 Can you reach 2048?</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- New Game Confirmation Dialog -->
+  <div class="confirmation-dialog" id="newGameDialog">
+    <div class="dialog-content">
+      <h3 class="dialog-title">New Game</h3>
+      <p class="dialog-message">Are you sure you want to start a new game? All progress will be lost.</p>
+      <div class="dialog-buttons">
+        <button class="dialog-button dialog-button-primary" id="startNewGameBtn">Start New Game</button>
+        <button class="dialog-button dialog-button-secondary" id="cancelNewGameBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tutorial Modal -->
+  <div class="tutorial-modal" id="tutorialModal">
+    <div class="tutorial-content">
+      <div class="tutorial-header">
+        <h2 class="tutorial-title">How to Play 2048</h2>
+        <button class="tutorial-close" id="tutorialCloseBtn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="tutorial-sections">
+        <div class="tutorial-section">
+          <div class="tutorial-icon">🎯</div>
+          <h3>Objective</h3>
+          <p>Combine tiles with the same number to reach the 2048 tile!</p>
+        </div>
+        
+        <div class="tutorial-section">
+          <div class="tutorial-icon">⌨️</div>
+          <h3>Controls</h3>
+          <p>Use arrow keys or swipe to move tiles in any direction.</p>
+        </div>
+        
+        <div class="tutorial-section">
+          <div class="tutorial-icon">🔢</div>
+          <h3>Scoring</h3>
+          <p>Each merge adds points to your score. Higher tiles = more points!</p>
+        </div>
+        
+        <div class="tutorial-section">
+          <div class="tutorial-icon">⚠️</div>
+          <h3>Game Over</h3>
+          <p>The game ends when no more moves are possible.</p>
+        </div>
+      </div>
+      
+      <div class="tutorial-demo">
+        <h3>Try it out!</h3>
+        <div class="tutorial-grid">
+          <div class="tutorial-tile tutorial-tile-2">2</div>
+          <div class="tutorial-tile tutorial-tile-4">4</div>
+          <div class="tutorial-tile tutorial-tile-8">8</div>
+          <div class="tutorial-tile tutorial-tile-16">16</div>
+        </div>
+      </div>
+      
+      <div class="tutorial-footer">
+        <button class="tutorial-start-btn" id="tutorialStartBtn">Start Playing</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Modal -->
+  <div class="stats-modal" id="statsModal">
+    <div class="stats-content">
+      <div class="stats-header">
+        <h2 class="stats-title">Game Statistics</h2>
+        <button class="stats-close" id="statsCloseBtn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-icon">🎯</div>
+          <div class="stat-info">
+            <h3>Current Score</h3>
+            <p class="stat-value" id="currentScore">0</p>
+          </div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-icon">🏆</div>
+          <div class="stat-info">
+            <h3>Best Score</h3>
+            <p class="stat-value" id="bestScore">0</p>
+          </div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-icon">👣</div>
+          <div class="stat-info">
+            <h3>Total Moves</h3>
+            <p class="stat-value" id="totalMoves">0</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stats-footer">
+        <button class="stats-ok-btn" id="statsOkBtn">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="settings-modal" id="settingsModal">
+    <div class="settings-content">
+      <div class="settings-header">
+        <h2 class="settings-title">Settings</h2>
+        <button class="settings-close" id="settingsCloseBtn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="settings-message">
+        <div class="coming-soon-icon">🚧</div>
+        <h3>Coming Soon!</h3>
+        <p>Game settings and customization options will be available in the next update.</p>
+      </div>
+      
+      <div class="settings-footer">
+        <button class="settings-ok-btn" id="settingsOkBtn">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaderboard Modal -->
+  <div class="leaderboard-modal" id="leaderboardModal">
+    <div class="leaderboard-content">
+      <div class="leaderboard-header">
+        <h2 class="leaderboard-title">Leaderboard</h2>
+        <button class="leaderboard-close" id="leaderboardCloseBtn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="leaderboard-message">
+        <div class="coming-soon-icon">🏆</div>
+        <h3>Coming Soon!</h3>
+        <p>Global leaderboards and high scores will be available in the next update.</p>
+      </div>
+      
+      <div class="leaderboard-footer">
+        <button class="leaderboard-ok-btn" id="leaderboardOkBtn">OK</button>
+      </div>
+    </div>
   </div>
 
   <script src="js/bind_polyfill.js"></script>
