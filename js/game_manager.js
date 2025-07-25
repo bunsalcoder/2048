@@ -20,8 +20,28 @@ function GameManager(size, InputManager, Actuator, StorageManager) {
 // Restart the game
 GameManager.prototype.restart = function () {
   this.storageManager.clearGameState();
+  // Also clear from API
+  if (window.ApiService) {
+    window.ApiService.clearGameProgress().then(() => {
+      // After clearing, get fresh game progress to update UI
+      if (window.ApiService) {
+        window.ApiService.getGameProgress().then((apiResponse) => {
+          if (apiResponse && apiResponse.gameState && apiResponse.gameState.grid && window.gameManager) {
+            window.gameManager.restoreFromAPI(apiResponse);
+          } else if (window.gameManager) {
+            window.gameManager.restoreFromAPI(null);
+          }
+        });
+      }
+    });
+  }
   this.actuator.continueGame(); // Clear the game won/lost message
   this.setup();
+  
+  // After setup, save the new game state to API
+  if (window.ApiService) {
+    window.ApiService.saveGameProgress(this.serialize());
+  }
 };
 
 // Keep playing after winning (allows going over 2048)
@@ -60,8 +80,52 @@ GameManager.prototype.setup = function () {
     this.addStartTiles();
   }
 
-  // Update the actuator
-  this.actuate();
+  // Don't actuate immediately - wait for API response
+  this.waitingForAPI = true;
+};
+
+GameManager.prototype.restoreFromAPI = function (apiResponse) {
+  // Extract gameState and bestScore from API response
+  console.log('=============[GameManager] Restoring from API:', apiResponse);
+  var gameState = apiResponse ? apiResponse.gameState : null;
+  var bestScore = apiResponse ? apiResponse.bestScore : null;
+  
+  if (gameState && gameState.grid) {
+    // Create grid with the cells from API
+    this.grid        = new Grid(gameState.grid.size,
+                                gameState.grid.cells);
+    this.score       = gameState.score || 0;
+    this.over        = gameState.over || false;
+    this.won         = gameState.won || false;
+    this.keepPlaying = gameState.keepPlaying || false;
+    this.moveCount   = gameState.moveCount || 0;
+
+    // Store API best score for UI updates
+    if (bestScore !== undefined) {
+      this.apiBestScore = bestScore;
+      localStorage.setItem('bestScore', bestScore);
+    }
+
+    // Update the actuator to refresh the UI
+    this.actuate();
+  } else {
+    // No API data or null response - create new game
+    this.grid        = new Grid(this.size);
+    this.score       = 0;
+    this.over        = false;
+    this.won         = false;
+    this.keepPlaying = false;
+    this.moveCount   = 0;
+
+    // Add the initial tiles
+    this.addStartTiles();
+    
+    // Update the actuator to refresh the UI
+    this.actuate();
+  }
+  
+  // Mark that we're no longer waiting for API
+  this.waitingForAPI = false;
 };
 
 // Set up the initial tiles to start the game with
@@ -83,22 +147,46 @@ GameManager.prototype.addRandomTile = function () {
 
 // Sends the updated grid to the actuator
 GameManager.prototype.actuate = function () {
-  if (this.storageManager.getBestScore() < this.score) {
+  // Update best score first if current score is higher
+  if (this.score > this.storageManager.getBestScore()) {
     this.storageManager.setBestScore(this.score);
+    this.apiBestScore = this.score;
   }
+  
+  // Use API best score if available, otherwise use localStorage
+  var bestScore = this.apiBestScore !== undefined ? this.apiBestScore : this.storageManager.getBestScore();
 
   // Clear the state when the game is over (game over only, not win)
   if (this.over) {
     this.storageManager.clearGameState();
+    // Also clear from API
+    if (window.ApiService) {
+      window.ApiService.clearGameProgress().then(() => {
+        // After clearing, get fresh game progress to update UI
+        if (window.ApiService) {
+          window.ApiService.getGameProgress().then((apiResponse) => {
+            if (apiResponse && apiResponse.gameState && apiResponse.gameState.grid && window.gameManager) {
+              window.gameManager.restoreFromAPI(apiResponse);
+            } else if (window.gameManager) {
+              window.gameManager.restoreFromAPI(null);
+            }
+          });
+        }
+      });
+    }
   } else {
     this.storageManager.setGameState(this.serialize());
+    // Also save to API
+    if (window.ApiService) {
+      window.ApiService.saveGameProgress(this.serialize());
+    }
   }
 
   this.actuator.actuate(this.grid, {
     score:      this.score,
     over:       this.over,
     won:        this.won,
-    bestScore:  this.storageManager.getBestScore(),
+    bestScore:  bestScore,
     terminated: this.isGameTerminated(),
     moveCount:  this.moveCount
   });
@@ -297,7 +385,7 @@ GameManager.prototype.stats = function () {
   
   // Update stats values
   currentScoreEl.textContent = this.score;
-  bestScoreEl.textContent = this.storageManager.getBestScore();
+  bestScoreEl.textContent = this.apiBestScore !== undefined ? this.apiBestScore : this.storageManager.getBestScore();
   totalMovesEl.textContent = this.moveCount;
   
   // Show modal
