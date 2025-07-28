@@ -1,0 +1,114 @@
+# 2048 Game Build Instructions
+
+## Prerequisites
+- Node.js and npm installed
+- Python 3 (for local testing)
+
+## Project Structure
+```
+2048/
+├── js/                    # JavaScript files
+├── style/                 # CSS files
+├── meta/                  # Apple touch icons
+├── public/                # Static files for Vite build
+├── favicon.ico           # Favicon
+├── index.html            # Main HTML file
+├── package.json          # Dependencies
+├── vite.config.js        # Vite configuration
+└── .env                  # Environment variables
+```
+
+## Build Process
+
+### 1. Install Dependencies
+```bash
+npm install
+```
+
+### 2. Set Up Public Folder (First Time Only)
+The `public/` folder is required for Vite to copy static files to the build output.
+
+```bash
+# Create public folder
+mkdir -p public
+
+# Copy all necessary files to public
+cp -r js public/
+cp -r style public/
+cp -r meta public/
+cp favicon.ico public/
+```
+
+### 3. Environment Variables
+Create a `.env` file in the root directory with your API configuration:
+
+```env
+VITE_API_BASE_URL=https://your-api-url.com/api
+VITE_MOS_APP_KEY=your_mos_app_key_here
+VITE_ENV=local
+```
+
+### 4. Build the Project
+```bash
+npm run build
+```
+
+This will:
+- Process and optimize CSS files
+- Copy all files from `public/` to `dist/`
+- Generate optimized assets in `dist/assets/`
+- Create the final build in `dist/` directory
+
+### 5. Test the Build
+```bash
+cd dist
+python3 -m http.server 8080
+```
+
+Then open http://localhost:8080 in your browser.
+
+## Build Output
+The `dist/` folder will contain:
+```
+dist/
+├── assets/               # Vite-generated assets (CSS, fonts, images)
+├── favicon.ico          # Favicon
+├── index.html           # Main HTML file
+├── js/                  # All JavaScript files (11 files)
+├── meta/                # Apple touch icons
+└── style/               # CSS files
+```
+
+## Key Features
+- ✅ Score persists when game is over
+- ✅ "Play Again" resets score to 0 and starts fresh game
+- ✅ Environment variables work properly
+- ✅ All assets included and optimized
+
+## Troubleshooting
+
+### If JavaScript files are missing:
+1. Make sure `public/js/` folder exists
+2. Run `npm run build` again
+3. Check that all files are copied to `dist/js/`
+
+### If environment variables don't work:
+1. Check that `.env` file exists in root directory
+2. Verify environment variable names start with `VITE_`
+3. Restart the development server
+
+### If port is already in use:
+```bash
+pkill -f "python3 -m http.server"
+cd dist && python3 -m http.server 8081
+```
+
+## Development vs Production
+- **Development**: Uses `npm run dev` with hot reload
+- **Production**: Uses `npm run build` for optimized static files
+
+## Notes
+- The build process uses Vite for asset optimization
+- Static files are copied from `public/` to `dist/`
+- Environment variables are processed during build time
+- The game works with both development and production builds 
