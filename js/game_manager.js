@@ -22,21 +22,14 @@ GameManager.prototype.restart = function () {
   this.storageManager.clearGameState();
   // Also clear from API
   if (window.ApiService) {
-    window.ApiService.clearGameProgress().then(() => {
-      // After clearing, get fresh game progress to update UI
-      if (window.ApiService) {
-        window.ApiService.getGameProgress().then((apiResponse) => {
-          if (apiResponse && apiResponse.gameState && apiResponse.gameState.grid && window.gameManager) {
-            window.gameManager.restoreFromAPI(apiResponse);
-          } else if (window.gameManager) {
-            window.gameManager.restoreFromAPI(null);
-          }
-        });
-      }
-    });
+    window.ApiService.clearGameProgress();
   }
   this.actuator.continueGame(); // Clear the game won/lost message
   this.setup();
+  
+  // Force actuate to update UI immediately after setup
+  this.waitingForAPI = false;
+  this.actuate();
   
   // After setup, save the new game state to API
   if (window.ApiService) {
@@ -156,25 +149,8 @@ GameManager.prototype.actuate = function () {
   // Use API best score if available, otherwise use localStorage
   var bestScore = this.apiBestScore !== undefined ? this.apiBestScore : this.storageManager.getBestScore();
 
-  // Clear the state when the game is over (game over only, not win)
-  if (this.over) {
-    this.storageManager.clearGameState();
-    // Also clear from API
-    if (window.ApiService) {
-      window.ApiService.clearGameProgress().then(() => {
-        // After clearing, get fresh game progress to update UI
-        if (window.ApiService) {
-          window.ApiService.getGameProgress().then((apiResponse) => {
-            if (apiResponse && apiResponse.gameState && apiResponse.gameState.grid && window.gameManager) {
-              window.gameManager.restoreFromAPI(apiResponse);
-            } else if (window.gameManager) {
-              window.gameManager.restoreFromAPI(null);
-            }
-          });
-        }
-      });
-    }
-  } else {
+  // Save the game state (don't clear when game is over - only clear on restart)
+  if (!this.over) {
     this.storageManager.setGameState(this.serialize());
     // Also save to API
     if (window.ApiService) {
