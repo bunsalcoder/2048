@@ -6,7 +6,16 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    sourcemap: true
+    sourcemap: true,
+    rollupOptions: {
+      input: {
+        main: 'index.html'
+      },
+      output: {
+        // Don't bundle JS files, just copy them
+        manualChunks: undefined
+      }
+    }
   },
   server: {
     port: 3000,
