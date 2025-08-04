@@ -149,13 +149,11 @@ GameManager.prototype.actuate = function () {
   // Use API best score if available, otherwise use localStorage
   var bestScore = this.apiBestScore !== undefined ? this.apiBestScore : this.storageManager.getBestScore();
 
-  // Save the game state (don't clear when game is over - only clear on restart)
-  if (!this.over) {
-    this.storageManager.setGameState(this.serialize());
-    // Also save to API
-    if (window.ApiService) {
-      window.ApiService.saveGameProgress(this.serialize());
-    }
+  // Save the game state (including when game is over - only clear on restart)
+  this.storageManager.setGameState(this.serialize());
+  // Also save to API
+  if (window.ApiService) {
+    window.ApiService.saveGameProgress(this.serialize());
   }
 
   this.actuator.actuate(this.grid, {

@@ -85,7 +85,13 @@ body {
   letter-spacing: 0.5px;
 }
 
-.menu-button, .restart-button {
+.header-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.menu-button, .restart-button, .stats-button {
   background: none;
   border: none;
   padding: 10px;
@@ -98,7 +104,7 @@ body {
   justify-content: center;
 }
 
-.menu-button:hover, .restart-button:hover {
+.menu-button:hover, .restart-button:hover, .stats-button:hover {
   background: rgba(0, 0, 0, 0.05);
 }
 
@@ -385,7 +391,7 @@ body {
 /* Footer */
 .game-footer {
   width: 100%;
-  display: flex;
+  display: none; /* Hide footer since it's now empty */
   flex-direction: column;
   align-items: center;
   gap: 20px;
