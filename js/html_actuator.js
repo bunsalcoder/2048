@@ -126,8 +126,15 @@ HTMLActuator.prototype.message = function (won) {
   this.messageContainer.classList.add(type);
   
   if (won) {
-    // For win message, use simple text
-    this.messageContainer.getElementsByTagName("p")[0].textContent = message;
+    // For win message, update the title and show the message
+    var titleElement = this.messageContainer.querySelector('.game-over-title');
+    if (titleElement) {
+      titleElement.textContent = message;
+    }
+    // Add show class to make the message visible
+    setTimeout(() => {
+      this.messageContainer.classList.add('show');
+    }, 100);
   } else {
     // For game over, show the modern game over screen
     this.showGameOverScreen();

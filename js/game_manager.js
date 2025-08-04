@@ -39,13 +39,13 @@ GameManager.prototype.restart = function () {
 
 // Keep playing after winning (allows going over 2048)
 GameManager.prototype.keepPlaying = function () {
-  this.keepPlaying = true;
+  this.keepPlayingState = true;
   this.actuator.continueGame(); // Clear the game won/lost message
 };
 
 // Return true if the game is lost, or has won and the user hasn't kept playing
 GameManager.prototype.isGameTerminated = function () {
-  return this.over || (this.won && !this.keepPlaying);
+  return this.over || (this.won && !this.keepPlayingState);
 };
 
 // Set up the game
@@ -59,14 +59,14 @@ GameManager.prototype.setup = function () {
     this.score       = previousState.score;
     this.over        = previousState.over;
     this.won         = previousState.won;
-    this.keepPlaying = previousState.keepPlaying;
+    this.keepPlayingState = previousState.keepPlaying;
     this.moveCount   = previousState.moveCount || 0;
   } else {
     this.grid        = new Grid(this.size);
     this.score       = 0;
     this.over        = false;
     this.won         = false;
-    this.keepPlaying = false;
+    this.keepPlayingState = false;
     this.moveCount   = 0;
 
     // Add the initial tiles
@@ -90,7 +90,7 @@ GameManager.prototype.restoreFromAPI = function (apiResponse) {
     this.score       = gameState.score || 0;
     this.over        = gameState.over || false;
     this.won         = gameState.won || false;
-    this.keepPlaying = gameState.keepPlaying || false;
+    this.keepPlayingState = gameState.keepPlaying || false;
     this.moveCount   = gameState.moveCount || 0;
 
     // Store API best score for UI updates
@@ -107,7 +107,7 @@ GameManager.prototype.restoreFromAPI = function (apiResponse) {
     this.score       = 0;
     this.over        = false;
     this.won         = false;
-    this.keepPlaying = false;
+    this.keepPlayingState = false;
     this.moveCount   = 0;
 
     // Add the initial tiles
@@ -174,7 +174,7 @@ GameManager.prototype.serialize = function () {
     score:       this.score,
     over:        this.over,
     won:         this.won,
-    keepPlaying: this.keepPlaying,
+    keepPlaying: this.keepPlayingState,
     moveCount:   this.moveCount
   };
 };
